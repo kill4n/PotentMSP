@@ -1,14 +1,15 @@
-#include <msp430.h> 
-
-/*
- * main.c
- */
+/************************************************
+ *  Generador									*
+ *  Crhistian Segura							*
+ *  main.c 										*
+ ************************************************/
+#include <msp430g2452.h>
 #define LED_0 BIT0
 #define LED_1 BIT6
 #define LED_OUT P1OUT
 #define LED_DIR P1DIR
-unsigned int timerCount = 16000-2;
-double porc=0.2;
+
+unsigned int timerCount = 10, overVal=16000;
 void main(void)
 {
 	WDTCTL = WDTPW + WDTHOLD; // Stop watchdog timer
@@ -29,6 +30,7 @@ void main(void)
 }
 
 int state=1;
+unsigned int min=100,max=16000-1000;
 int count=0;
 int dir=1;
 // Timer A0 interrupt service routine
@@ -37,17 +39,26 @@ __interrupt void Timer_A (void)
 {
 	P1OUT ^= (LED_1);
 	if (state && BIT0) {
-		TA0CCR0 =  timerCount * porc;                     // 12.5 Hz
+		TA0CCR0 =  timerCount;                     // 12.5 Hz
 	} else {
-		TA0CCR0 =  timerCount * (1-porc);                     // 12.5 Hz
+		TA0CCR0 =  overVal-timerCount;                     // 12.5 Hz
 	}
 	state ^= BIT0;
+	if(timerCount<=min){
+		timerCount=min;
+		dir=+1;
+	}
+	if(timerCount >= max){
+		timerCount=max;
+		dir=-1;
+	}
+	timerCount+=dir;
 	if((count++)>=100)
 	{ // un decimo de la frecuencia
 		count=0;
 		P1OUT ^= LED_0;
-		porc+=0.001;
+		/*porc+=0.001;
 		if(porc>=0.9)
-			porc=0.1;
+			porc=0.1;*/
 	}
 }
