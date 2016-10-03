@@ -1,5 +1,5 @@
 /************************************************
- *  Generador									*
+ *  Generator squared signal					*
  *  Crhistian Segura							*
  *  main.c 										*
  ************************************************/
@@ -30,7 +30,7 @@ void main(void)
 }
 
 int state=1;
-unsigned int min=100,max=16000-1000;
+unsigned int min=100,max=16000-100;
 int count=0;
 int dir=1;
 // Timer A0 interrupt service routine
