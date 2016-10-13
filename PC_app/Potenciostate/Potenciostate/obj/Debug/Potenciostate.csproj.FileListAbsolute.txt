@@ -1,0 +1,9 @@
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\bin\Debug\Potenciostate.exe.config
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\bin\Debug\Potenciostate.exe
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\bin\Debug\Potenciostate.pdb
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\obj\Debug\Potenciostate.csprojResolveAssemblyReference.cache
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\obj\Debug\Potenciostate.Form1.resources
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\obj\Debug\Potenciostate.Properties.Resources.resources
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\obj\Debug\Potenciostate.csproj.GenerateResource.Cache
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\obj\Debug\Potenciostate.exe
+C:\Users\crhistian\Dropbox\VS_git_repo\PotentMSP\PC_app\Potenciostate\Potenciostate\obj\Debug\Potenciostate.pdb

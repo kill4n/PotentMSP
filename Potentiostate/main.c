@@ -1,60 +1,69 @@
-/*#include <msp430g2553.h>
+#include <msp430g2553.h>
 #define LED_0 BIT0
 #define LED_1 BIT6
 #define LED_OUT P1OUT
 #define LED_DIR P1DIR
-unsigned int timerCount = 16000-2;
-double porc=0.3;
+unsigned int timerCount = 16000;
+unsigned int porc = 1000;
 void main(void)
 {
 	WDTCTL = WDTPW + WDTHOLD; // Stop watchdog timer
-
 	BCSCTL1 = CALBC1_16MHZ;
 	DCOCTL = CALDCO_16MHZ;
-
 	LED_DIR |= (LED_0 + LED_1); // Set P1.0 and P1.6 to output direction
 	LED_OUT &= ~(LED_0 + LED_1); // Set the LEDs off
 
 	TA0CCTL0 = CCIE;                       // CCR0 interrupt enabled
 	TA1CCTL0 = CCIE;                       // CCR1 interrupt enabled
-	TA1CTL =TASSEL_2 + MC_1 + TACLR;
 	TA0CTL = TASSEL_2 + MC_1 + TACLR;           // SMCLK, upmode
+	TA1CTL = TASSEL_2 + MC_1 + TACLR + ID_3;
 	TA0CCR0 =  timerCount;                     // 12.5 Hz
-	TA1CCR0 = 4000;
-
+	TA1CCR0 = 10000;
 	// Clear the timer and enable timer interrupt
 	__enable_interrupt();
 	__bis_SR_register(LPM0 + GIE); // LPM0 with interrupts enabled
 }
-
-int state=1;
-int count=0;
+int state,state1,state2, count;
 // Timer A0 interrupt service routine
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void Timer_A (void)
 {
 	P1OUT ^= (LED_0);
 	if (state && BIT0) {
-		TA0CCR0 =  timerCount * porc+1;                     // 12.5 Hz
+		TA0CCR0 = porc;
 	} else {
-		TA0CCR0 =  timerCount * (1-porc)+1;                     // 12.5 Hz
+		TA0CCR0 =  timerCount - porc;
 	}
 	state ^= BIT0;
-	// / *if((count++)>=100)
-	//{ // un decimo de la frecuencia
-	//	count=0;
-	//	porc+=0.001;
-	//	if(porc>=1)
-	//		porc=0.1;
-	//}* /
 }
 // Timer A1 interrupt
 #pragma vector = TIMER1_A0_VECTOR
 __interrupt void Timer1_A0(void)
 {
-	P1OUT ^= LED_1;
+	if((count++)>=100)
+	{ // un decimo de la frecuencia
+		count = 0;
+		P1OUT ^= (LED_1);
+		if(state2 && BIT0)
+			porc += 1000;
+		else
+			porc -= 1000;
+
+		if(porc >= 16000)
+		{
+			porc = 14000;
+			state2 &= ~BIT0;
+		}
+		if(porc <= 0)
+		{
+			porc = 2000;
+			state2 |= BIT0;
+		}
+
+	}
+	state1 ^= BIT0;
 }
- */
+/*
 #include "msp430g2553.h"
 
 void UARTSendArray(unsigned char *TxArray, unsigned char ArrayLength);
@@ -72,7 +81,7 @@ void main(void)
 	BCSCTL1 = CALBC1_1MHZ; // Set DCO to 1MHz
 	DCOCTL = CALDCO_1MHZ; // Set DCO to 1MHz
 
-	/* Configure hardware UART */
+	// Configure hardware UART
 	P1SEL = BIT1 + BIT2 ; // P1.1 = RXD, P1.2=TXD
 	P1SEL2 = BIT1 + BIT2 ; // P1.1 = RXD, P1.2=TXD
 	UCA0CTL1 |= UCSSEL_2; // Use SMCLK
@@ -137,3 +146,6 @@ void UARTSendArray(unsigned char *TxArray, unsigned char ArrayLength){
 		TxArray++; //Increment the TxString pointer to point to the next character
 	}
 }
+ */
+
+
