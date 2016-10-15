@@ -15,8 +15,8 @@ int main(void) {
 
 	/* Use Calibration values for 1MHz Clock DCO*/
 	DCOCTL = 0;
-	BCSCTL1 = CALBC1_1MHZ;
-	DCOCTL = CALDCO_1MHZ;
+	BCSCTL1 = CALBC1_16MHZ;
+	DCOCTL = CALDCO_16MHZ;
 
 	P1DIR |= BIT0 + BIT6; // Set the LEDs on P1.0, P1.6 as outputs
 	P1OUT = BIT0; // Set P1.0
@@ -30,9 +30,9 @@ int main(void) {
 
 	/* Configure */
 	UCA0CTL1 |= UCSSEL_2; // SMCLK
-	UCA0BR0 = 104; // 1MHz 9600
-	UCA0BR1 = 0; // 1MHz 9600
-	UCA0MCTL = UCBRS0; // Modulation UCBRSx = 1
+	UCA0BR0 = 82; // 1MHz 9600
+	UCA0BR1 = 06; // 1MHz 9600
+	UCA0MCTL = UCBRS1+ UCBRS2; // Modulation UCBRSx = 1
 
 	/* Take UCA0 out of reset */
 	UCA0CTL1 &= ~UCSWRST;
@@ -59,13 +59,13 @@ __interrupt void Timer_A (void)
 	//unsigned char dataArray[2] = {0x42, 0x43}; // Variable dataArray is now an unsigned char pointer (the type accepted by the function)
 	//UARTSendArray(dataArray, 2);//data = sizeof(TxArray)/sizeof(unsigned char);
 
-	 int data[2]={1023, 235};
-	 UARTSendArray(data, 4); // Note because the UART transmits bytes it is necessary to send two bytes for each integer hence the data length is twice the array length
+	// int data[2]={1023, 235};
+	// UARTSendArray(data, 4); // Note because the UART transmits bytes it is necessary to send two bytes for each integer hence the data length is twice the array length
 
 	//arr_int[0] = da2/da1;
 	// convert 123 to string [buf]
 	//	UARTSendByte((unsigned char)arr_int[0]);
-	UARTSendArray("@@", 2);
+	UARTSendArray("@0", 2);
 }
 /* Echo back RXed character, confirm TX buffer is ready first */
 #pragma vector = USCIAB0RX_VECTOR

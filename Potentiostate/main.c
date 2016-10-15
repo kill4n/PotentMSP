@@ -5,6 +5,10 @@
 #define LED_DIR P1DIR
 unsigned int timerCount = 16000;
 unsigned int porc = 1000;
+
+void UARTSendArray(unsigned char *TxArray, unsigned char ArrayLength);
+unsigned char data;
+
 void main(void)
 {
 	WDTCTL = WDTPW + WDTHOLD; // Stop watchdog timer
@@ -16,10 +20,20 @@ void main(void)
 	TA0CCTL0 = CCIE;                       // CCR0 interrupt enabled
 	TA1CCTL0 = CCIE;                       // CCR1 interrupt enabled
 	TA0CTL = TASSEL_2 + MC_1 + TACLR;           // SMCLK, upmode
-	TA1CTL = TASSEL_2 + MC_1 + TACLR + ID_3;
+	TA1CTL = TASSEL_2 + MC_1 + TACLR;
 	TA0CCR0 =  timerCount;                     // 12.5 Hz
-	TA1CCR0 = 10000;
+	TA1CCR0 = 16000;
+	// Configure hardware UART
+	P1SEL = BIT1 + BIT2 ; // P1.1 = RXD, P1.2=TXD
+	P1SEL2 = BIT1 + BIT2 ; // P1.1 = RXD, P1.2=TXD
+	UCA0CTL1 |= UCSSEL_2; // Use SMCLK
+	UCA0BR0 = 82; // 1MHz 9600
+	UCA0BR1 = 06; // 1MHz 9600
+	UCA0MCTL = UCBRS1+ UCBRS2; // Modulation UCBRSx = 1
+	UCA0CTL1 &= ~UCSWRST; // Initialize USCI state machine
+	IE2 |= UCA0RXIE; // Enable USCI_A0 RX interrupt
 	// Clear the timer and enable timer interrupt
+
 	__enable_interrupt();
 	__bis_SR_register(LPM0 + GIE); // LPM0 with interrupts enabled
 }
@@ -36,22 +50,25 @@ __interrupt void Timer_A (void)
 	}
 	state ^= BIT0;
 }
+unsigned char dataa[]={50,100,12,20};
+
 // Timer A1 interrupt
 #pragma vector = TIMER1_A0_VECTOR
 __interrupt void Timer1_A0(void)
 {
-	if((count++)>=100)
+	P1OUT ^= (LED_1);
+	if((count++)>=1000)
 	{ // un decimo de la frecuencia
 		count = 0;
-		P1OUT ^= (LED_1);
+
 		if(state2 && BIT0)
 			porc += 1000;
 		else
 			porc -= 1000;
 
-		if(porc >= 16000)
+		if(porc >= 17000)
 		{
-			porc = 14000;
+			porc = 15000;
 			state2 &= ~BIT0;
 		}
 		if(porc <= 0)
@@ -59,7 +76,8 @@ __interrupt void Timer1_A0(void)
 			porc = 2000;
 			state2 |= BIT0;
 		}
-
+		UARTSendArray("@@", 2);
+		UARTSendArray(dataa, 4);
 	}
 	state1 ^= BIT0;
 }
@@ -133,7 +151,7 @@ __interrupt void USCI0RX_ISR(void)
 	break;
 	}
 }
-
+ */
 void UARTSendArray(unsigned char *TxArray, unsigned char ArrayLength){
 	// Send number of bytes Specified in ArrayLength in the array at using the hardware UART 0
 	// Example usage: UARTSendArray("Hello", 5);
@@ -146,6 +164,6 @@ void UARTSendArray(unsigned char *TxArray, unsigned char ArrayLength){
 		TxArray++; //Increment the TxString pointer to point to the next character
 	}
 }
- */
+
 
 
